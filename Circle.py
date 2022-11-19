@@ -20,8 +20,12 @@ class Circle(Physical):
         body.position = pos
         shape = pm.Circle(body, radius, (0, 0))
 
-        super().__init__(shape, body, window, camera)
+        super().__init__(shape, window, camera)
 
     def draw(self):
         screen_position = self.camera.to_scr_pos(self.get_pos())
         pygame.draw.circle(self.window, pygame.Color("blue"), screen_position, int(self.radius), 2)
+
+    def copy(self):
+        ret = Circle(self.window, self.camera, self.get_pos())
+        return ret
