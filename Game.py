@@ -3,10 +3,22 @@ import ctypes
 import pygame
 import pymunk as pm
 
+from Builder import Builder
+from BuildingElement import BuildingElement
 from Camera import Camera
+from Catapult import Catapult
+from Circle import Circle
+from Rectangle import Rectangle
 
 
 class Game:
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    RED = (255, 0, 0)
+    YELLOW = (255, 255, 0)
+
+    FPS = 60
+    
     def __init__(self):
         user32 = ctypes.windll.user32
         self.space = pm.Space()
@@ -18,3 +30,59 @@ class Game:
         self.camera = Camera((self.width, self.height), (0, 0))
         self.drawables = []
         self.run = True
+
+        elements_choice = [
+            BuildingElement(Rectangle(self.display, self.camera, pos=(0, 0), size=(10, 50)), cost=100),
+        ]
+        self.builder = Builder(1000, 15, elements_choice)
+
+    def calculate_physics(self):
+        dt = 1.0 / 60.0
+        for x in range(1):
+            self.space.step(dt)
+
+    def update_screen(self, clock):
+        self.update_drawable()
+        self.builder
+
+        self.display_frame(clock)
+
+    def update_drawable(self):
+        to_remove = []
+        for drawable in self.drawables:
+            # if drawable.get_pos()[1] > 400:
+            #     to_remove.append(drawable)
+            p = tuple(map(int, drawable.get_pos()))
+            drawable.draw()
+        for ball in to_remove:
+            self.space.remove(ball.shape, ball.body)
+            self.drawables.remove(ball)
+
+    def display_frame(self, clock):
+        pygame.display.update()
+        self.display.fill(pygame.Color("white"))
+        clock.tick(Game.FPS)
+        pygame.display.flip()
+
+    def handle_input(self, catapult: Catapult):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.run = False
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                print(pos)
+                circle = Circle(self.display, self.camera, pos)
+                self.space.add(circle.shape, circle.body)
+                self.drawables.append(circle)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                pos = pygame.mouse.get_pos()
+                print(pos)
+                circle = Circle(self.display, self.camera, pos)
+                self.space.add(circle.shape, circle.body)
+                self.drawables.append(circle)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                projectile = catapult.space_clicked()
+                if projectile is not None:
+                    self.space.add(projectile.body, projectile.shape)
+
