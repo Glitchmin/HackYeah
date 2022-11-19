@@ -28,3 +28,7 @@ class Drawable:
     @abstractmethod
     def draw(self):
         pass
+
+    @abstractmethod
+    def draw_on_pos(self, pos: Tuple[float, float]):
+        pass

@@ -3,9 +3,7 @@ from copy import copy
 
 import pygame
 import pymunk as pm
-from pymunk import Body
 
-import GameStates
 from Builder import Builder
 from BuildingElement import BuildingElement
 from Camera import Camera
@@ -22,6 +20,7 @@ class Game:
     YELLOW = (255, 255, 0)
 
     FPS = 60
+    GRID_SIZE = 15
 
     def __init__(self):
         user32 = ctypes.windll.user32
@@ -39,9 +38,9 @@ class Game:
         self.current_player = 0
 
         elements_choice = [
-            BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(10, 50)), cost=100),
+            BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)), cost=100),
         ]
-        self.builder = Builder(1000, 15, elements_choice)
+        self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
 
     def set_state_to_building(self):
         self.current_player += 1
@@ -115,6 +114,8 @@ class Game:
                 if projectile is not None:
                     self.space.add(projectile.body, projectile.shape)
 
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 if self.current_state == GameStates.BUILDING:
                     self.set_state_to_firing()

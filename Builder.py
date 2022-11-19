@@ -2,23 +2,29 @@ from copy import copy, deepcopy
 from typing import List, Tuple
 
 from BuildingElement import BuildingElement
+from Camera import Camera
 
 
 class Builder:
 
-    def __init__(self, budget: int, grid_size: int, elements_choice: List[BuildingElement]):
+    def __init__(self, budget: int, grid_size: int, elements_choice: List[BuildingElement], camera: Camera):
         self.budget = budget
         self.grid_size = grid_size
         self.elements_choice = elements_choice
         self.selected = copy(elements_choice[0])
+        self.camera = camera
 
     def show_selected(self, pos: Tuple[float, float]):
         if self.selected is not None:
-            self.selected.physical.body.position = self.pos_in_grid(pos)
+            # self.selected.physical.body.position = self.pos_in_grid(pos)
+            self.selected.physical.body.position = self.pos_in_grid(self.camera.to_world_pos(pos))
             self.selected.physical.draw()
+            # self.selected.physical.draw_on_pos(pos)
 
     def build(self, pos: Tuple[float, float]):
         if self.selected is not None:
+            org_pos = pos
+            pos = self.camera.to_world_pos(pos)
             pos = self.pos_in_grid(pos)
             new_element = self.selected.physical.copy()
             new_element.body.position = pos

@@ -34,3 +34,10 @@ class Camera:
             pos[0] - self.pos[0],
             pos[1] - self.pos[1]
         )
+
+    def to_world_pos(self, pos: Tuple[float, float]) -> Tuple[float, float]:
+        self.update_followed()
+        return (
+            pos[0] + self.pos[0],
+            pos[1] + self.pos[1]
+        )
