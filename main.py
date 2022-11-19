@@ -7,6 +7,7 @@ from Camera import Camera
 from Catapult import Catapult
 from Circle import Circle
 from Game import Game
+from Player import Player
 
 pygame.display.set_caption("Camelopard Castle: Siege")
 
@@ -69,12 +70,13 @@ def handle_input(catapult: Catapult):
 def main():
     clock = pygame.time.Clock()
 
-    catapult = Catapult(game.space, game.drawables, game.display, game.camera)
-    game.drawables.append(catapult)
+    player = Player(True,game)
+    player.playerTurn()
+    game.drawables.append(player.catapult)
     current_state = GameStates.PL_1_BUILDING
 
     while game.run:
-        handle_input(catapult)
+        handle_input(player.catapult)
         calculate_physics()
         update_screen(clock)
 
