@@ -26,6 +26,7 @@ class Ground(Drawable):
         body.position = camera_position[0] + w / 2, camera_position[1] + h / 2
         vs = [(-w / 2, -h / 2), (w / 2, -h / 2), (w / 2, h / 2), (-w / 2, h / 2)]
         shape = pymunk.Poly(body, vs)
+        shape.friction = 1
 
         self.shape = shape
         self.body = body
@@ -35,7 +36,10 @@ class Ground(Drawable):
     def draw(self):
         camera_position = self.camera.to_scr_pos(self.pos)
 
-        rect = pygame.Rect(camera_position[0], camera_position[1], self.width, self.height)
+        self.draw_on_pos(camera_position)
+
+    def draw_on_pos(self, pos: Tuple[float, float]):
+        rect = pygame.Rect(*pos, self.width, self.height)
         pygame.draw.rect(self.window, GREEN, rect)
 
     def get_pos(self) -> Tuple[float, float]:
