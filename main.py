@@ -77,8 +77,9 @@ def main():
                 space.add(circle.shape, circle.body)
                 drawables.append(circle)
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                catapult.space_clicked()
-
+                projectile = catapult.space_clicked()
+                if projectile is not None:
+                    space.add(projectile.body, projectile.shape)
         WIN.fill(pygame.Color("white"))
 
         to_remove = []

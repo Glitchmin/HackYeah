@@ -23,7 +23,7 @@ class Catapult(Drawable):
         self.space = space
         self.angular_speed = 0.0
         self.calc_end()
-        self.yeet_force = 500
+        self.yeet_force = 1000
         self.is_spinning = False
         self.balls = balls
 
@@ -36,9 +36,10 @@ class Catapult(Drawable):
         self.angular_speed = 0
         self.is_spinning = False
         ball = Circle(self.window, self.camera, self.end_point)
-        # Circle..add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
-        #  self.yeet_force * math.cos(math.radians(self.angle - 90)))
+        ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
+                          self.yeet_force * math.cos(math.radians(self.angle - 90)))
         self.balls.append(ball)
+        return ball
 
     def calc_end(self):
         self.angle += self.angular_speed
