@@ -6,6 +6,8 @@ import pymunk as pm
 from Camera import Camera
 from Catapult import Catapult
 from Circle import Circle
+
+from ground import Ground
 from Game import Game
 from Player import Player
 
