@@ -62,7 +62,7 @@ class Game:
         pygame.display.update()
         self.display.fill(pygame.Color("white"))
         clock.tick(Game.FPS)
-        pygame.display.flip()
+        # pygame.display.flip()
 
     def handle_input(self, catapult: Catapult):
         for event in pygame.event.get():
