@@ -1,5 +1,6 @@
+import random
 import pygame
-import os
+import pymunk as pm
 
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -14,10 +15,16 @@ YELLOW = (255, 255, 0)
 FPS = 60
 
 
-def add_block(cords):
-    x, y = cords
-    rect = pygame.Rect(x, y, 20, 20)
-    pygame.draw.rect(WIN, BLACK, rect)
+def add_block(cords, space, squares):
+    mass = 10
+    radius = 25
+    inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
+    body = pm.Body(mass, inertia)
+    x = cords[0]
+    body.position = x, cords[1]
+    shape = pm.Circle(body, radius, (0, 0))
+    space.add(body, shape)
+    squares.append(shape)
 
 
 def rect_clicked(click, rect):
@@ -30,6 +37,12 @@ def main():
     clock = pygame.time.Clock()
     run = True
 
+    space = pm.Space()
+    space.gravity = (0.0, 900.0)
+    ch = space.add_collision_handler(0, 0)
+    ch.data["surface"] = WIN
+
+    squares = []
 
     # WIN.blit(SPACE, (0, 0))
 
@@ -51,8 +64,31 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print(pos)
-                add_block(pos)
+                add_block(pos, space, squares)
 
+        WIN.fill(pygame.Color("white"))
+
+        balls_to_remove = []
+        for ball in squares:
+            if ball.body.position.y > 400:
+                balls_to_remove.append(ball)
+            p = tuple(map(int, ball.body.position))
+            pygame.draw.circle(WIN, pygame.Color("blue"), p, int(ball.radius), 2)
+
+        for ball in balls_to_remove:
+            space.remove(ball, ball.body)
+            squares.remove(ball)
+
+
+        ### Update physics
+        dt = 1.0 / 60.0
+        for x in range(1):
+            space.step(dt)
+
+        ### Flip screen
+        pygame.display.flip()
+        clock.tick(50)
+        pygame.display.set_caption("fps: " + str(clock.get_fps()))
 
     pygame.quit()
 
