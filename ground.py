@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pygame, pymunk
 
 from Camera import Camera
@@ -29,3 +31,6 @@ class Ground(Drawable):
         shape = pymunk.Poly(body, vs)
 
         self.space.add(body, shape)
+
+    def get_pos(self) -> Tuple[float, float]:
+        return self.pos
