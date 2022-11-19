@@ -36,6 +36,8 @@ class Catapult(Drawable):
         self.angular_speed = 0
         self.is_spinning = False
         ball = Circle(self.window, self.camera, self.end_point)
+        if not self.isFirstPlayer:
+            self.angle += 180
         ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
                           self.yeet_force * math.cos(math.radians(self.angle - 90)))
         self.camera.follow(ball)
