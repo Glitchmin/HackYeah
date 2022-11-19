@@ -1,7 +1,6 @@
 from abc import ABC
 from typing import Tuple
 
-from _distutils_hack import override
 from pymunk import Shape, Body
 
 from Camera import Camera
@@ -15,6 +14,5 @@ class Physical(Drawable, ABC):
         self.shape = shape
         self.body = body
 
-    @override
     def get_pos(self) -> Tuple[float, float]:
         return self.shape.body.position

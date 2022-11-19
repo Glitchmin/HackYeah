@@ -1,15 +1,13 @@
-import pygame, pymunk
+import random
+import pygame
+import pymunk as pm
 
 from Camera import Camera
-from Catapult import Catapult
-from ground import Ground
-from shapes_collection import *
+from Circle import Circle
 
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
-space = pymunk.Space()
-GRAVITY = 200
-space.gravity = (0, GRAVITY)
+
 pygame.display.set_caption("Second Game!")
 
 WHITE = (255, 255, 255)
@@ -19,11 +17,17 @@ YELLOW = (255, 255, 0)
 
 FPS = 60
 
-
-def add_block(cords):
-    x, y = cords
-    rect = pygame.Rect(x, y, 20, 20)
-    pygame.draw.rect(WIN, BLACK, rect)
+#
+# def add_block(cords, space, squares):
+#     mass = 10
+#     radius = 25
+#     inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
+#     body = pm.Body(mass, inertia)
+#     x = cords[0]
+#     body.position = x, cords[1]
+#     shape = pm.Circle(body, radius, (0, 0))
+#     space.add(body, shape)
+#     squares.append(shape)
 
 
 def rect_clicked(click, rect):
@@ -32,34 +36,32 @@ def rect_clicked(click, rect):
     return rect.x <= x <= rect.x + rect.width and rect.y <= y <= rect.y + rect.height
 
 
-class wall():
-    pass
-
-
 def main():
     clock = pygame.time.Clock()
     run = True
 
+    space = pm.Space()
+    space.gravity = (0.0, 900.0)
+    ch = space.add_collision_handler(0, 0)
+    ch.data["surface"] = WIN
+
+    camera = Camera((WIDTH, HEIGHT), (0, 0))
+
+    drawables = []
+
     # WIN.blit(SPACE, (0, 0))
 
     WIN.fill(WHITE)
-    # RECT = pygame.Rect(300, 0, 100, 50)
-    # pygame.draw.rect(WIN, RED, RECT)
+    RECT = pygame.Rect(300, 0, 100, 50)
+    pygame.draw.rect(WIN, RED, RECT)
 
     placing = False
-    drawables = []
-    camera = Camera((WIDTH, HEIGHT))
-    drawables.append(Ground(WIN, space, camera))
-    catapult = Catapult(space, drawables, WIN, camera)
-    drawables.append(catapult)
+
     while run:
         pygame.display.update()
 
         clock.tick(FPS)
-        space.step(1 / FPS)
-        WIN.fill(WHITE)
-        for b in drawables:
-            b.draw()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -67,14 +69,32 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print(pos)
-                x, y = pos
-                new_ball = Ball(x, y)
-                new_ball.add_to_space(space)
-                new_ball.draw(WIN, BLACK)
-                drawables.append(new_ball)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                catapult.space_clicked()
+                circle = Circle(WIN, camera, pos)
+                space.add(circle.shape, circle.body)
+                drawables.append(circle)
 
+        WIN.fill(pygame.Color("white"))
+
+        to_remove = []
+        for drawable in drawables:
+            if drawable.body.position.y > 400:
+                to_remove.append(drawable)
+            p = tuple(map(int, drawable.body.position))
+            pygame.draw.circle(WIN, pygame.Color("blue"), p, int(drawable.radius), 2)
+
+        for ball in to_remove:
+            space.remove(ball.shape, ball.body)
+            drawables.remove(ball)
+
+        ### Update physics
+        dt = 1.0 / 60.0
+        for x in range(1):
+            space.step(dt)
+
+        ### Flip screen
+        pygame.display.flip()
+        clock.tick(50)
+        pygame.display.set_caption("fps: " + str(clock.get_fps()))
 
     pygame.quit()
 
