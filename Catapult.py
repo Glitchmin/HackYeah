@@ -14,7 +14,7 @@ class Catapult(Drawable):
 
     def __init__(self, space: Space, balls: [collisionforbody], window, camera: Camera):
         super().__init__(window, camera)
-        self.base_pos = 200, 750 - 200
+        self.base_pos = 200, 500 - 200
         self.mass = 100
         self.angle = -45
         self.length = 200
@@ -46,6 +46,7 @@ class Catapult(Drawable):
         self.end_point = self.base_pos[0] + diff[0], self.base_pos[1] + diff[1]
 
     def draw(self):
+        self.calc_end()
         pygame.draw.line(self.window, pygame.Color("brown"), self.base_pos, self.end_point, 5)
 
     def get_pos(self) -> Tuple[float, float]:
