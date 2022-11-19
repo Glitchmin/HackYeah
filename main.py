@@ -75,6 +75,8 @@ def main():
     player = Player(True,game)
     player.playerTurn()
     game.drawables.append(player.catapult)
+    game.drawables.append(Ground(game.display,game.space,game.camera))
+
     current_state = GameStates.PL_1_BUILDING
 
     while game.run:

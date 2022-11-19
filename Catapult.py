@@ -8,6 +8,7 @@ import collisionforbody
 from Camera import Camera
 from Circle import Circle
 from Drawable import Drawable
+from Game import Game
 from shapes_collection import Ball
 
 
@@ -43,7 +44,7 @@ class Catapult(Drawable):
         ball = Circle(self.window, self.camera, self.end_point)
         ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
                           self.yeet_force * math.cos(math.radians(self.angle - 90)))
-        self.camera.follow(self)
+        self.camera.follow(ball)
         self.drawables.append(ball)
         return ball
 
@@ -56,7 +57,6 @@ class Catapult(Drawable):
         self.calc_end()
         base_point = self.camera.to_scr_pos(self.base_pos)
         end_point = self.camera.to_scr_pos(self.end_point)
-
         pygame.draw.line(self.window, pygame.Color("brown"), base_point, end_point, 5)
 
     def get_pos(self) -> Tuple[float, float]:
