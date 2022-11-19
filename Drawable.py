@@ -15,5 +15,16 @@ class Drawable:
         pass
 
     @abstractmethod
+    def get_size(self) -> Tuple[float, float]:
+        pass
+
+    def get_right_bottom_pos(self) -> Tuple[float, float]:
+        return tuple(pos + size for (pos, size) in zip(self.get_pos(), self.get_size()))
+
+    def get_center(self) -> Tuple[float, float]:
+        return tuple(pos + size/2 for (pos, size) in zip(self.get_pos(), self.get_size()))
+
+
+    @abstractmethod
     def draw(self):
         pass
