@@ -13,7 +13,6 @@ YELLOW = (255, 255, 0)
 
 FPS = 60
 
-
 def add_block(cords):
     x, y = cords
     rect = pygame.Rect(x, y, 20, 20)
