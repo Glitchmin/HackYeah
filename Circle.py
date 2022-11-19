@@ -23,4 +23,4 @@ class Circle(Physical):
         super().__init__(shape, body, window, camera)
 
     def draw(self):
-        pygame.draw.circle(self.window, pygame.Color("blue"), self.get_pos, int(self.radius), 2)
+        pygame.draw.circle(self.window, pygame.Color("blue"), self.get_pos(), int(self.radius), 2)

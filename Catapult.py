@@ -6,6 +6,7 @@ from pymunk import Space
 
 import collisionforbody
 from Camera import Camera
+from Circle import Circle
 from Drawable import Drawable
 from shapes_collection import Ball
 
@@ -18,7 +19,7 @@ class Catapult(Drawable):
         self.mass = 100
         self.angle = -45
         self.length = 200
-        self.end_point = 0, 0
+        self.end_point = 0.0, 0.0
         self.space = space
         self.angular_speed = 0.0
         self.calc_end()
@@ -34,10 +35,9 @@ class Catapult(Drawable):
             return
         self.angular_speed = 0
         self.is_spinning = False
-        ball = Ball(self.end_point[0], self.end_point[1])
-        ball.add_to_space(self.space)
-        ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
-                          self.yeet_force * math.cos(math.radians(self.angle - 90)))
+        ball = Circle(self.window, self.camera, self.end_point)
+        # Circle..add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
+        #  self.yeet_force * math.cos(math.radians(self.angle - 90)))
         self.balls.append(ball)
 
     def calc_end(self):

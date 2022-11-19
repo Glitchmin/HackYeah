@@ -3,6 +3,7 @@ import pygame
 import pymunk as pm
 
 from Camera import Camera
+from Catapult import Catapult
 from Circle import Circle
 
 WIDTH, HEIGHT = 900, 500
@@ -55,6 +56,9 @@ def main():
     RECT = pygame.Rect(300, 0, 100, 50)
     pygame.draw.rect(WIN, RED, RECT)
 
+    catapult = Catapult(space,drawables,WIN,camera)
+    drawables.append(catapult)
+
     placing = False
 
     while run:
@@ -72,15 +76,17 @@ def main():
                 circle = Circle(WIN, camera, pos)
                 space.add(circle.shape, circle.body)
                 drawables.append(circle)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                catapult.space_clicked()
 
         WIN.fill(pygame.Color("white"))
 
         to_remove = []
         for drawable in drawables:
-            if drawable.body.position.y > 400:
-                to_remove.append(drawable)
-            p = tuple(map(int, drawable.body.position))
-            pygame.draw.circle(WIN, pygame.Color("blue"), p, int(drawable.radius), 2)
+            # if drawable.get_pos()[1] > 400:
+            #     to_remove.append(drawable)
+            p = tuple(map(int, drawable.get_pos()))
+            drawable.draw()
 
         for ball in to_remove:
             space.remove(ball.shape, ball.body)
