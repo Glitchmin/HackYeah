@@ -57,7 +57,7 @@ def main():
                 pos = pygame.mouse.get_pos()
                 print(pos)
                 x, y = pos
-                new_ball = ball(x, y)
+                new_ball = Ball(x, y)
                 new_ball.add_to_space(space)
                 new_ball.draw(WIN, BLACK)
                 balls.append(new_ball)

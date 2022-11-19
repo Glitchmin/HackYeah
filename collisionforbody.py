@@ -3,7 +3,7 @@ import pygame,pymunk
 
 shapes = {"ball" : pymunk.Circle} #ENUM?
 
-class collision_for_body(object):
+class CollisionForBody(object):
     def __init__(self, x, y):
         self.body = pymunk.Body(1, 100)
         self.body.position = x, y

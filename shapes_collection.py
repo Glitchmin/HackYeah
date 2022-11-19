@@ -1,10 +1,10 @@
-from collision_for_body import *
+from collisionforbody import *
 import pygame,pymunk
 
 
-class ball(collision_for_body):
+class Ball(CollisionForBody):
     def __init__(self, x, y):
-        collision_for_body.__init__(self, x, y)
+        CollisionForBody.__init__(self, x, y)
         self.add_velocity(0, 0)
         self.body.body_type = pymunk.Body.DYNAMIC
         self.setshape("ball")
@@ -18,5 +18,6 @@ class ball(collision_for_body):
     def draw(self, WINDOW, COLOR):
         x, y = self.body.position
         pygame.draw.circle(WINDOW, COLOR, self.body.position, 8) # problemy do rozw ale odpalic trzeba
-class wall(collision_for_body):
-    def __init__(self, left_corner, top_corner):
+
+#class wall(collision_for_body):
+#    def __init__(self, left_corner, top_corner):
