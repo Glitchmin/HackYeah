@@ -1,4 +1,6 @@
 import pygame,pymunk
+
+from ground import Ground
 from shapes_collection import *
 
 WIDTH, HEIGHT = 900, 500
@@ -41,6 +43,7 @@ def main():
 
     placing = False
     balls = []
+    balls.append(Ground(WIN,space,None))
     while run:
         pygame.display.update()
 
@@ -48,7 +51,7 @@ def main():
         space.step(1/FPS)
         WIN.fill(WHITE)
         for b in balls:
-            b.draw(WIN, BLACK)
+            b.draw()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
