@@ -1,4 +1,5 @@
 from abc import ABC
+from copy import copy
 from typing import Tuple
 
 from pymunk import Shape, Body
@@ -9,10 +10,10 @@ from Drawable import Drawable
 
 class Physical(Drawable, ABC):
 
-    def __init__(self, shape: Shape, body: Body, window, camera: Camera):
+    def __init__(self, shape: Shape, window, camera: Camera):
         super().__init__(window, camera)
         self.shape = shape
-        self.body = body
+        self.body = self.shape.body
 
     def get_pos(self) -> Tuple[float, float]:
         return self.shape.body.position
@@ -26,3 +27,9 @@ class Physical(Drawable, ABC):
     def add_velocity(self, x=0, y=0):
         self.add_x_velocity(x)
         self.add_y_velocity(y)
+
+    def copy(self):
+        ret = Physical(copy(self.shape), self.window, self.camera)
+        # ret.shape = copy(self.shape)
+        # ret.body = self.shape.body
+        return ret

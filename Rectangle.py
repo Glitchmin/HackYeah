@@ -20,7 +20,11 @@ class Rectangle(Physical):
         body.position = pos
         shape = pm.Poly.create_box(body, size)
 
-        super().__init__(shape, body, window, camera)
+        super().__init__(shape, window, camera)
 
     def draw(self):
         pygame.draw.rect(self.window, pygame.Color("blue"), rect=pygame.Rect(*self.get_pos(), *self.get_size()))
+
+    def copy(self):
+        ret = Rectangle(self.window, self.camera, self.get_pos(), self.size)
+        return ret

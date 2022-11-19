@@ -1,4 +1,5 @@
 import ctypes
+from copy import copy
 
 import pygame
 import pymunk as pm
@@ -32,7 +33,7 @@ class Game:
         self.run = True
 
         elements_choice = [
-            BuildingElement(Rectangle(self.display, self.camera, pos=(0, 0), size=(10, 50)), cost=100),
+            BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(10, 50)), cost=100),
         ]
         self.builder = Builder(1000, 15, elements_choice)
 
@@ -62,7 +63,6 @@ class Game:
         pygame.display.update()
         self.display.fill(pygame.Color("white"))
         clock.tick(Game.FPS)
-        # pygame.display.flip()
 
     def handle_input(self, catapult: Catapult):
         for event in pygame.event.get():
@@ -73,6 +73,21 @@ class Game:
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print(pos)
+                element = self.builder.build(pos)
+                if element is not None:
+                    self.space.add(element.shape, element.body)
+                    self.drawables.append(element)
+
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                pos = pygame.mouse.get_pos()
+                print(pos)
+                circle = Circle(self.display, self.camera, pos)
+                self.space.add(circle.shape, circle.body)
+                self.drawables.append(circle)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                projectile = catapult.space_clicked()
+                if projectile is not None:
+                    self.space.add(projectile.body, projectile.shape)
                 element = Circle(self.display, self.camera, pos)
                 self.space.add(element.shape, element.body)
                 self.drawables.append(element)
