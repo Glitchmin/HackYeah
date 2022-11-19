@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pygame, pymunk
 
 from Camera import Camera
@@ -11,21 +13,30 @@ class Ground(Drawable):
         super().__init__(window, camera)
         self.space = space
         self.height = height
-        self.width = window.get_width()
+        self.width = 100 * window.get_width()
         self.color = GREEN
 
         self.pos = (0, self.window.get_height() - self.height)
 
-    def draw(self):
         body = pymunk.Body(body_type=pymunk.Body.STATIC)
+
+        camera_position = self.camera.to_scr_pos(self.pos)
+
         w, h = self.width, self.height
-
-        body.position = self.pos[0] + w / 2, self.pos[1] + h / 2
-
-        rect = pygame.Rect(self.pos[0], self.pos[1], self.width, self.height)
-        pygame.draw.rect(self.window, GREEN, rect)
-
+        body.position = camera_position[0] + w / 2, camera_position[1] + h / 2
         vs = [(-w / 2, -h / 2), (w / 2, -h / 2), (w / 2, h / 2), (-w / 2, h / 2)]
         shape = pymunk.Poly(body, vs)
 
+        self.shape = shape
+        self.body = body
+
         self.space.add(body, shape)
+
+    def draw(self):
+        camera_position = self.camera.to_scr_pos(self.pos)
+
+        rect = pygame.Rect(camera_position[0], camera_position[1], self.width, self.height)
+        pygame.draw.rect(self.window, GREEN, rect)
+
+    def get_pos(self) -> Tuple[float, float]:
+        return self.pos

@@ -39,6 +39,7 @@ class Catapult(Drawable):
         ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
                           self.yeet_force * math.cos(math.radians(self.angle - 90)))
         self.balls.append(ball)
+        self.camera.follow(self)
         return ball
 
     def calc_end(self):
@@ -48,7 +49,10 @@ class Catapult(Drawable):
 
     def draw(self):
         self.calc_end()
-        pygame.draw.line(self.window, pygame.Color("brown"), self.base_pos, self.end_point, 5)
+        base_point = self.camera.to_scr_pos(self.base_pos)
+        end_point = self.camera.to_scr_pos(self.end_point)
+
+        pygame.draw.line(self.window, pygame.Color("brown"), base_point, end_point, 5)
 
     def get_pos(self) -> Tuple[float, float]:
         return self.end_point
