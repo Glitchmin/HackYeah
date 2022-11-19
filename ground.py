@@ -1,11 +1,14 @@
 import pygame, pymunk
 
+from Camera import Camera
+from Drawable import Drawable
+
 GREEN = (0, 255, 0)
 
 
-class Ground:
-    def __init__(self, window, space, height=50):
-        self.window = window
+class Ground(Drawable):
+    def __init__(self, window, space, camera: Camera, height=50):
+        super().__init__(window, camera)
         self.space = space
         self.height = height
         self.width = window.get_width()
