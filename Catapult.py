@@ -25,6 +25,7 @@ class Catapult:
 
     def space_clicked(self):
         if not self.is_spinning:
+            self.angle = -45
             self.angular_speed = -7
             self.is_spinning = True
             return
