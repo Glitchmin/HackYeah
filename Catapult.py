@@ -2,19 +2,13 @@ import math
 from typing import Tuple
 
 import pygame
-from pymunk import Space
-
-import collisionforbody
-from Camera import Camera
 from Circle import Circle
 from Drawable import Drawable
-from Game import Game
-from shapes_collection import Ball
 
 
 class Catapult(Drawable):
 
-    def __init__(self, game: Game, isFirstPlayer: bool):
+    def __init__(self, game, isFirstPlayer: bool):
         super().__init__(game.display, game.camera)
         self.base_pos = 200, 500 - 200
         self.mass = 100
