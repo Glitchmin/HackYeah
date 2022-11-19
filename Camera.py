@@ -1,6 +1,5 @@
 from typing import Tuple
 
-from Drawable import Drawable
 
 
 class Camera:
@@ -16,7 +15,7 @@ class Camera:
     def set_center(self, pos: Tuple[float, float]):
         pass
 
-    def follow(self, target: Drawable):
+    def follow(self, target):
         self.target = target
 
     def to_scr_pos(self, pos: Tuple[float, float]) -> Tuple[float, float]:

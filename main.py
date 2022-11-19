@@ -2,6 +2,9 @@ import random
 import pygame
 import pymunk as pm
 
+from Camera import Camera
+from Circle import Circle
+
 WIDTH, HEIGHT = 900, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -14,17 +17,17 @@ YELLOW = (255, 255, 0)
 
 FPS = 60
 
-
-def add_block(cords, space, squares):
-    mass = 10
-    radius = 25
-    inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
-    body = pm.Body(mass, inertia)
-    x = cords[0]
-    body.position = x, cords[1]
-    shape = pm.Circle(body, radius, (0, 0))
-    space.add(body, shape)
-    squares.append(shape)
+#
+# def add_block(cords, space, squares):
+#     mass = 10
+#     radius = 25
+#     inertia = pm.moment_for_circle(mass, 0, radius, (0, 0))
+#     body = pm.Body(mass, inertia)
+#     x = cords[0]
+#     body.position = x, cords[1]
+#     shape = pm.Circle(body, radius, (0, 0))
+#     space.add(body, shape)
+#     squares.append(shape)
 
 
 def rect_clicked(click, rect):
@@ -42,7 +45,9 @@ def main():
     ch = space.add_collision_handler(0, 0)
     ch.data["surface"] = WIN
 
-    squares = []
+    camera = Camera((WIDTH, HEIGHT), (0, 0))
+
+    drawables = []
 
     # WIN.blit(SPACE, (0, 0))
 
@@ -64,21 +69,22 @@ def main():
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print(pos)
-                add_block(pos, space, squares)
+                circle = Circle(WIN, camera, pos)
+                space.add(circle.shape, circle.body)
+                drawables.append(circle)
 
         WIN.fill(pygame.Color("white"))
 
-        balls_to_remove = []
-        for ball in squares:
-            if ball.body.position.y > 400:
-                balls_to_remove.append(ball)
-            p = tuple(map(int, ball.body.position))
-            pygame.draw.circle(WIN, pygame.Color("blue"), p, int(ball.radius), 2)
+        to_remove = []
+        for drawable in drawables:
+            if drawable.body.position.y > 400:
+                to_remove.append(drawable)
+            p = tuple(map(int, drawable.body.position))
+            pygame.draw.circle(WIN, pygame.Color("blue"), p, int(drawable.radius), 2)
 
-        for ball in balls_to_remove:
-            space.remove(ball, ball.body)
-            squares.remove(ball)
-
+        for ball in to_remove:
+            space.remove(ball.shape, ball.body)
+            drawables.remove(ball)
 
         ### Update physics
         dt = 1.0 / 60.0
