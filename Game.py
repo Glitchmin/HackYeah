@@ -43,7 +43,7 @@ class Game:
 
     def update_screen(self, clock):
         self.update_drawable()
-        self.builder
+        self.builder.show_selected(pygame.mouse.get_pos())
 
         self.display_frame(clock)
 
@@ -72,9 +72,9 @@ class Game:
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print(pos)
-                circle = Circle(self.display, self.camera, pos)
-                self.space.add(circle.shape, circle.body)
-                self.drawables.append(circle)
+                element = Circle(self.display, self.camera, pos)
+                self.space.add(element.shape, element.body)
+                self.drawables.append(element)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
                 pos = pygame.mouse.get_pos()
                 print(pos)
