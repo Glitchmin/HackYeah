@@ -19,7 +19,7 @@ class Game:
     YELLOW = (255, 255, 0)
 
     FPS = 60
-    
+
     def __init__(self):
         user32 = ctypes.windll.user32
         self.space = pm.Space()
@@ -78,20 +78,6 @@ class Game:
                     self.space.add(element.shape, element.body)
                     self.drawables.append(element)
 
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
-                pos = pygame.mouse.get_pos()
-                print(pos)
-                circle = Circle(self.display, self.camera, pos)
-                self.space.add(circle.shape, circle.body)
-                self.drawables.append(circle)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                projectile = catapult.space_clicked()
-                if projectile is not None:
-                    self.space.add(projectile.body, projectile.shape)
-                element = Circle(self.display, self.camera, pos)
-                self.space.add(element.shape, element.body)
-                self.drawables.append(element)
-
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
                     pos = pygame.mouse.get_pos()
@@ -107,4 +93,3 @@ class Game:
 
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
-
