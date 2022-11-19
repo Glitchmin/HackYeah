@@ -2,7 +2,6 @@ from typing import Tuple
 
 from Drawable import Drawable
 
-
 class Camera:
 
     def __init__(self, size: Tuple[int, int], pos: Tuple[float, float] = (0, 0)):

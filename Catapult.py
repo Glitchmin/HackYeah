@@ -1,16 +1,20 @@
 import math
+from typing import Tuple
 
 import pygame
 from pymunk import Space
 
 import collisionforbody
+from Camera import Camera
+from Drawable import Drawable
 from shapes_collection import Ball
 
 
-class Catapult:
+class Catapult(Drawable):
 
-    def __init__(self, space: Space, display: pygame.display, balls: [collisionforbody]):
-        self.base_pos = 200, 750-200
+    def __init__(self, space: Space, balls: [collisionforbody], window, camera: Camera):
+        super().__init__(window, camera)
+        self.base_pos = 200, 750 - 200
         self.mass = 100
         self.angle = -45
         self.length = 200
@@ -18,7 +22,6 @@ class Catapult:
         self.space = space
         self.angular_speed = 0.0
         self.calc_end()
-        self.display = display
         self.yeet_force = 500
         self.is_spinning = False
         self.balls = balls
@@ -33,7 +36,8 @@ class Catapult:
         self.is_spinning = False
         ball = Ball(self.end_point[0], self.end_point[1])
         ball.add_to_space(self.space)
-        ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)), self.yeet_force * math.cos(math.radians(self.angle - 90)))
+        ball.add_velocity(self.yeet_force * math.sin(math.radians(self.angle - 90)),
+                          self.yeet_force * math.cos(math.radians(self.angle - 90)))
         self.balls.append(ball)
 
     def calc_end(self):
@@ -42,4 +46,7 @@ class Catapult:
         self.end_point = self.base_pos[0] + diff[0], self.base_pos[1] + diff[1]
 
     def draw(self):
-        pygame.draw.line(self.display, pygame.Color("brown"), self.base_pos, self.end_point, 5)
+        pygame.draw.line(self.window, pygame.Color("brown"), self.base_pos, self.end_point, 5)
+
+    def get_pos(self) -> Tuple[float, float]:
+        return self.end_point
