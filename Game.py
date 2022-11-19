@@ -3,12 +3,15 @@ from copy import copy
 
 import pygame
 import pymunk as pm
+from pymunk import Body
 
+import GameStates
 from Builder import Builder
 from BuildingElement import BuildingElement
 from Camera import Camera
 from Catapult import Catapult
 from Circle import Circle
+from Player import Player
 from Rectangle import Rectangle
 
 
@@ -19,7 +22,7 @@ class Game:
     YELLOW = (255, 255, 0)
 
     FPS = 60
-    
+
     def __init__(self):
         user32 = ctypes.windll.user32
         self.space = pm.Space()
@@ -31,11 +34,35 @@ class Game:
         self.camera = Camera((self.width, self.height), (0, 0))
         self.drawables = []
         self.run = True
+        self.players = [Player(True, self), Player(False, self)]
+        self.current_state = GameStates.BUILDING
+        self.current_player = 0
 
         elements_choice = [
             BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(10, 50)), cost=100),
         ]
         self.builder = Builder(1000, 15, elements_choice)
+
+    def set_state_to_building(self):
+        self.current_player += 1
+        self.current_player %= 2
+        self.current_state = GameStates.BUILDING
+        self.camera.follow(self.players[self.current_player].catapult)
+
+    def set_state_to_firing(self):
+        self.current_state = GameStates.FIRING
+        self.players[self.current_player].playerTurn()
+
+
+    def apply_rules(self):
+        if self.current_state == GameStates.BUILDING:
+            self.space.gravity = 0, 0
+        if self.current_state == GameStates.FIRING:
+            self.space.gravity = 0, 900
+            if self.players[self.current_player].catapult.is_ball_not_moving():
+                print("ball stopped")
+                self.set_state_to_building()
+
 
     def calculate_physics(self):
         dt = 1.0 / 60.0
@@ -83,8 +110,11 @@ class Game:
                 circle = Circle(self.display, self.camera, pos)
                 self.space.add(circle.shape, circle.body)
                 self.drawables.append(circle)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                projectile = catapult.space_clicked()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.current_state == GameStates.FIRING:
+                projectile = self.players[self.current_player].catapult.space_clicked()
                 if projectile is not None:
                     self.space.add(projectile.body, projectile.shape)
 
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                if self.current_state == GameStates.BUILDING:
+                    self.set_state_to_firing()
