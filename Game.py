@@ -1,4 +1,5 @@
 import ctypes
+import math
 import types
 from copy import copy
 
@@ -207,6 +208,10 @@ class Game:
                         self.drawables.append(element.physical)
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    self.builder.angle += math.pi/2
+                if event.key == pygame.K_e:
+                    self.builder.angle -= math.pi/2
                 if event.key == pygame.K_p:
                     pos = pygame.mouse.get_pos()
                     print(pos)
