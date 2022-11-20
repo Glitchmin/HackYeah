@@ -38,5 +38,7 @@ class Builder:
         else:
             return None
 
+
+
     def pos_in_grid(self, pos):
         return (pos[0] - pos[0] % self.grid_size, pos[1] - pos[1] % self.grid_size)
