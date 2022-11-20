@@ -37,7 +37,10 @@ class Game:
         self.camera = Camera((self.width, self.height), (0, 0))
         self.drawables = []
         self.run = True
-        self.players = [Player(True, self), Player(False, self)]
+        player1 = Player(True, self, (200, 600))
+        player2 = Player(False, self, (800, 600))
+
+        self.players = [player1, player2]
         self.current_state = GameStates.BUILDING
         self.current_player = 1
         self.set_state_to_building()

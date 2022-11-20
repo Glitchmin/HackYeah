@@ -8,11 +8,12 @@ from Drawable import Drawable
 
 class Catapult(Drawable):
 
-    def __init__(self, game, isFirstPlayer: bool):
+    def __init__(self, game, isFirstPlayer: bool, base_pos: Tuple[float, float]):
         super().__init__(game.display, game.camera)
-        self.base_pos = 200, 500
-        if not isFirstPlayer:
-            self.base_pos = 1200, 500
+        self.base_pos = base_pos
+        # self.base_pos = 200, 500
+        # if not isFirstPlayer:
+        #     self.base_pos = 1200, 500
         self.mass = 100
         self.angle = -45
         self.length = 200
