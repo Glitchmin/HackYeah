@@ -3,6 +3,7 @@ from copy import copy
 
 import pygame
 import pymunk as pm
+from pymunk import CollisionHandler
 
 import GameStates
 from Builder import Builder
@@ -27,7 +28,8 @@ class Game:
         user32 = ctypes.windll.user32
         self.space = pm.Space()
         self.space.gravity = (0.0, 900.0)
-        self.ch = self.space.add_collision_handler(0, 0)
+        self.ch: CollisionHandler = self.space.add_collision_handler(0, 0)
+        self.ch.pre_solve = self.pre_solve_collision
         self.width, self.height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         self.display = pygame.display.set_mode((self.width, self.height))
         self.ch.data["surface"] = self.display
@@ -40,30 +42,42 @@ class Game:
         self.set_state_to_building()
 
         elements_choice = [
-            BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)), cost=100),
+            BuildingElement(
+                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)),
+                cost=100),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
+
+    def pre_solve_collision(self, arbiter, space, data):
+        a, b = arbiter.shapes
+        b.collision_type = 0
+        b.group = 1
+        body1 = a.body
+        body2 = b.body
+        print(body1.velocity, end=" ")
+        print(body2.velocity)
+        print(self.builder.body_to_item_dict.get(id(body1)))
+        print(self.builder.body_to_item_dict.get(id(body2)))
+        return True
 
     def set_state_to_building(self):
         self.space.gravity = 0, 0
         self.current_player += 1
         self.current_player %= 2
         self.current_state = GameStates.BUILDING
-        self.camera.target=None
-        self.camera.set_center((200,600))
+        self.camera.target = None
+        self.camera.set_center((200, 600))
 
     def set_state_to_firing(self):
         self.current_state = GameStates.FIRING
         self.players[self.current_player].playerTurn()
         self.space.gravity = 0, 900
 
-
     def apply_rules(self):
         if self.current_state == GameStates.FIRING:
             if self.players[self.current_player].catapult.is_ball_not_moving():
                 print("ball stopped")
                 self.set_state_to_building()
-
 
     def calculate_physics(self):
         dt = 1.0 / 60.0
