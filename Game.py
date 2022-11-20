@@ -80,7 +80,7 @@ class Game:
         # self.rect_ground_surface = self.ground_surface.get_rect()
         # self.rect_ground_surface.center = (-100, 100)
 
-        self.ground.color = pygame.Color("green")
+        self.ground.color = pygame.Color(0, 255, 100)
         self.drawables.append(self.ground)
         self.space.add(self.ground.shape, self.ground.shape.body)
 
@@ -185,7 +185,7 @@ class Game:
 
     def display_frame(self, clock):
         pygame.display.update()
-        self.display.fill(pygame.Color("white"))
+        self.display.fill(pygame.Color(0, 208, 230))
         clock.tick(Game.FPS)
 
     def finish_building(self):
