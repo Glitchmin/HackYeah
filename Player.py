@@ -7,7 +7,7 @@ from tuple_as_vector import v_add, v_mul
 
 
 class Player:
-    BASE_OFFSET = (0, 300)
+    BASE_OFFSET = (1000, 300)
 
     def __init__(self, isFirst: bool, game, pos_center: Tuple[float, float]):
         self.isFirst: bool = isFirst

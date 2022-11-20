@@ -41,8 +41,8 @@ class Game:
         self.drawables = []
         self.run = True
         self.proj_dict = {}
-        player1 = Player(True, self, (200, 600))
-        player2 = Player(False, self, (800, 600))
+        player1 = Player(True, self, (-1600, 600))
+        player2 = Player(False, self, (1600, 600))
 
         self.players = [player1, player2]
         self.current_state = GameStates.BUILDING
@@ -67,9 +67,10 @@ class Game:
         y = self.display.get_height() + 1.1 * 1000
         size_y = 2000
         pos = (-self.display.get_width() * 4, (y - (y - size_y / 2) % Game.GRID_SIZE))
+        # pos = (-self.display.get_width() * 4, self.display.get_height() + 200)
         self.ground = Rectangle(self.display, self.camera, pos,
                                 size=(100 * self.display.get_width(), size_y), image_loader=self.image_loader,
-                                image_name="testgrass.png", static=True, render_image=False)
+                                image_name="weed.png", static=True, render_image=False)
 
         # self.ground_surface = pygame.image.load("testgrass.png")
         # self.ground_surface.convert()
@@ -134,9 +135,8 @@ class Game:
         self.current_player %= 2
         self.current_state = GameStates.BUILDING
         self.camera.target = None
-        self.camera.set_center((200, 600))
-        if self.current_player == 1:
-            self.camera.set_center((800, 600))
+        self.camera.set_center(self.players[self.current_player].pos_center)
+
 
     def set_state_to_firing(self):
         self.current_state = GameStates.FIRING
