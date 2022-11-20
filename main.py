@@ -17,7 +17,7 @@ def main():
 
     while game.run:
         game.apply_rules()
-        game.handle_input(game.players[0].catapult)
+        game.handle_input()
         game.calculate_physics()
         game.update_screen(clock)
 
