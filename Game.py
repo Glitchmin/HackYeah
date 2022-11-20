@@ -4,6 +4,7 @@ from copy import copy
 import pygame
 import pymunk
 import pymunk as pm
+from pymunk import CollisionHandler
 
 import GameStates
 from Builder import Builder
@@ -28,7 +29,8 @@ class Game:
         user32 = ctypes.windll.user32
         self.space = pm.Space()
         self.space.gravity = (0.0, 900.0)
-        self.ch = self.space.add_collision_handler(0, 0)
+        self.ch: CollisionHandler = self.space.add_collision_handler(0, 0)
+        self.ch.pre_solve = self.pre_solve_collision
         self.width, self.height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         self.display = pygame.display.set_mode((self.width, self.height))
         self.ch.data["surface"] = self.display
@@ -64,6 +66,18 @@ class Game:
         # self.ground.color = pygame.Color("green")
         # self.drawables.append(self.ground)
         # self.space.add(self.ground.shape, self.ground.shape.body)
+
+    def pre_solve_collision(self, arbiter, space, data):
+        a, b = arbiter.shapes
+        b.collision_type = 0
+        b.group = 1
+        body1 = a.body
+        body2 = b.body
+        print(body1.velocity, end=" ")
+        print(body2.velocity)
+        print(self.builder.body_to_item_dict.get(id(body1)))
+        print(self.builder.body_to_item_dict.get(id(body2)))
+        return True
 
     def set_state_to_building(self):
         self.space.gravity = 0, 0

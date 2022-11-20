@@ -13,6 +13,7 @@ class Builder:
         self.elements_choice = elements_choice
         self.selected = copy(elements_choice[0])
         self.camera = camera
+        self.body_to_item_dict = {}
 
     def show_selected(self, pos: Tuple[float, float]):
         if self.selected is not None:
@@ -28,6 +29,7 @@ class Builder:
             pos = self.pos_in_grid(pos)
             new_element = self.selected.physical.copy()
             new_element.body.position = pos
+            self.body_to_item_dict[id(new_element.body)] = new_element
             return new_element
         else:
             return None
