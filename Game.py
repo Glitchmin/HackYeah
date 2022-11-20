@@ -39,7 +39,7 @@ class Game:
         self.run = True
         self.players = [Player(True, self), Player(False, self)]
         self.current_state = GameStates.BUILDING
-        self.current_player = 0
+        self.current_player = 1
         self.set_state_to_building()
 
         self.create_ground()
@@ -73,10 +73,10 @@ class Game:
         b.group = 1
         body1 = a.body
         body2 = b.body
-        print(body1.velocity, end=" ")
-        print(body2.velocity)
-        print(self.builder.body_to_item_dict.get(id(body1)))
-        print(self.builder.body_to_item_dict.get(id(body2)))
+        # print(body1.velocity, end=" ")
+        # print(body2.velocity)
+        # print(self.builder.body_to_item_dict.get(id(body1)))
+        # print(self.builder.body_to_item_dict.get(id(body2)))
         return True
 
     def set_state_to_building(self):
@@ -86,17 +86,21 @@ class Game:
         self.current_state = GameStates.BUILDING
         self.camera.target = None
         self.camera.set_center((200, 600))
+        if self.current_player == 1:
+            self.camera.set_center((800, 600))
 
     def set_state_to_firing(self):
         self.current_state = GameStates.FIRING
+        self.current_player += 1
+        self.current_player %= 2
         self.players[self.current_player].playerTurn()
+        self.camera.target = self.players[self.current_player].catapult
         self.space.gravity = 0, 900
 
     def apply_rules(self):
         if self.current_state == GameStates.FIRING:
             if self.players[self.current_player].catapult.is_ball_not_moving():
-                print("ball stopped")
-                self.set_state_to_building()
+                self.set_state_to_firing()
 
     def calculate_physics(self):
         dt = 1.0 / 60.0
@@ -153,4 +157,7 @@ class Game:
                     pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 if self.current_state == GameStates.BUILDING:
+                    self.set_state_to_building()
+                if self.current_player == 0:
+                    self.current_player = 1
                     self.set_state_to_firing()
