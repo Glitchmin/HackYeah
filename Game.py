@@ -43,7 +43,9 @@ class Game:
         self.players = [player1, player2]
         self.current_state = GameStates.BUILDING
         self.current_player = 1
+        self.current_proj: Circle = None
         self.set_state_to_building()
+
 
         self.create_ground()
 
@@ -102,7 +104,8 @@ class Game:
 
     def apply_rules(self):
         if self.current_state == GameStates.FIRING:
-            if self.players[self.current_player].catapult.is_ball_not_moving():
+            if self.current_proj is not None and self.current_proj.is_not_moving():
+                self.current_proj = None
                 self.set_state_to_firing()
 
     def calculate_physics(self):
@@ -112,7 +115,8 @@ class Game:
 
     def update_screen(self, clock):
         self.update_drawable()
-        self.builder.show_selected(pygame.mouse.get_pos())
+        if self.current_state == GameStates.BUILDING:
+            self.builder.show_selected(pygame.mouse.get_pos())
 
         self.display_frame(clock)
 
@@ -132,12 +136,12 @@ class Game:
         self.display.fill(pygame.Color("white"))
         clock.tick(Game.FPS)
 
-    def handle_input(self, catapult: Catapult):
+    def handle_input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.run = False
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONUP:
+            if event.type == pygame.MOUSEBUTTONUP and self.current_state == GameStates.BUILDING:
                 pos = pygame.mouse.get_pos()
                 print(pos)
                 element = self.builder.build(pos)
@@ -151,10 +155,17 @@ class Game:
                 circle = Circle(self.display, self.camera, pos)
                 self.space.add(circle.shape, circle.body)
                 self.drawables.append(circle)
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.current_state == GameStates.FIRING:
-                projectile = self.players[self.current_player].catapult.space_clicked()
-                if projectile is not None:
-                    self.space.add(projectile.body, projectile.shape)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and \
+                    self.current_state == GameStates.FIRING:
+                if self.current_proj is None:
+                    projectile = self.players[self.current_player].catapult.space_clicked()
+                    if projectile is not None:
+                        self.camera.target = projectile
+                        self.space.add(projectile.body, projectile.shape)
+                        self.current_proj = projectile
+                else:
+                    self.current_proj = None
+                    self.set_state_to_firing()
 
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()

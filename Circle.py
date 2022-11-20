@@ -23,6 +23,10 @@ class Circle(Physical):
 
         super().__init__(shape, window, camera)
 
+    def is_not_moving(self):
+        return abs(self.body.velocity[0]) + abs(self.body.velocity[1]) <= 2.0 or self.body.position[
+            1] > 1500
+
     def draw(self):
         self.draw_on_pos(self.camera.to_scr_pos(self.get_pos()))
 

@@ -52,11 +52,6 @@ class Catapult(Drawable):
         self.isHidden = True
         return ball
 
-    def is_ball_not_moving(self):
-        if self.ball is None:
-            return False
-        return abs(self.ball.body.velocity[0]) + abs(self.ball.body.velocity[1]) <= 1.0 or self.ball.body.position[
-            1] > 1500
 
     def calc_end(self):
         self.angle += self.angular_speed
