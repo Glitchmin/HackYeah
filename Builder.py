@@ -29,7 +29,7 @@ class Builder:
             org_pos = pos
             pos = self.camera.to_world_pos(pos)
             pos = self.pos_in_grid(pos)
-            new_element = BuildingElement(self.selected.physical.copy(),10,1000000)
+            new_element = BuildingElement(self.selected.physical.copy(),10,5*1000000)
             new_element.physical.body.position = pos
             new_element.physical.body.angle = self.angle
 
