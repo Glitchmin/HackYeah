@@ -37,6 +37,7 @@ class Game:
         self.camera = Camera((self.width, self.height), (0, 0))
         self.drawables = []
         self.run = True
+        self.proj_dict = {}
         player1 = Player(True, self, (200, 600))
         player2 = Player(False, self, (800, 600))
 
@@ -46,13 +47,12 @@ class Game:
         self.current_proj: Circle = None
         self.set_state_to_building()
 
-
         self.create_ground()
 
         elements_choice = [
             BuildingElement(
                 Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)),
-                cost=100),
+                cost=100, hp=10),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
 
@@ -78,10 +78,14 @@ class Game:
         b.group = 1
         body1 = a.body
         body2 = b.body
-        # print(body1.velocity, end=" ")
-        # print(body2.velocity)
-        # print(self.builder.body_to_item_dict.get(id(body1)))
-        # print(self.builder.body_to_item_dict.get(id(body2)))
+
+        if self.proj_dict.get(id(body2)) is not None or self.proj_dict.get(id(body1)):
+            for i in [0, 1]:
+                if body1 == self.players[i].king.physical.body or \
+                        body2 == self.players[i].king.physical.body:
+                    self.players[i].king.hp = -1
+                    print("player ", 1 - i, "won")
+
         return True
 
     def set_state_to_building(self):
@@ -160,6 +164,7 @@ class Game:
                 if self.current_proj is None:
                     projectile = self.players[self.current_player].catapult.space_clicked()
                     if projectile is not None:
+                        self.proj_dict[id(projectile.body)] = projectile
                         self.camera.target = projectile
                         self.space.add(projectile.body, projectile.shape)
                         self.current_proj = projectile

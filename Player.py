@@ -1,6 +1,8 @@
 from typing import Tuple
 
+from BuildingElement import BuildingElement
 from Catapult import Catapult
+from Rectangle import Rectangle
 from tuple_as_vector import v_add, v_mul
 
 
@@ -13,7 +15,11 @@ class Player:
         self.pos_center = pos_center
         self.money: int = 100
         self.catapult: Catapult = None
-        self.king = None
+        self.king = BuildingElement(
+                Rectangle(self.game.display, self.game.camera, pos_center, size=(game.GRID_SIZE * 4, game.GRID_SIZE * 6)),
+                cost=100, hp=10)
+        self.game.space.add(self.king.physical.shape, self.king.physical.body)
+        game.drawables.append(self.king.physical)
 
     def playerTurn(self):
         self.catapult = Catapult(self.game, self.isFirst,
