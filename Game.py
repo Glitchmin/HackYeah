@@ -57,7 +57,8 @@ class Game:
 
         elements_choice = [
             BuildingElement(
-                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6), image_loader = self.image_loader, image_name =  "szary.png"),
+                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6),
+                          image_loader=self.image_loader, image_name="szary.png"),
                 cost=100, hp=10),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
@@ -67,12 +68,13 @@ class Game:
         size_y = 2000
         pos = (-self.display.get_width() * 4, (y - (y - size_y / 2) % Game.GRID_SIZE))
         self.ground = Rectangle(self.display, self.camera, pos,
-                                size=(100 * self.display.get_width(), size_y), image_loader = self.image_loader, image_name =  "testgrass.png", static=True, render_image = False)
+                                size=(100 * self.display.get_width(), size_y), image_loader=self.image_loader,
+                                image_name="testgrass.png", static=True, render_image=False)
 
-        #self.ground_surface = pygame.image.load("testgrass.png")
-        #self.ground_surface.convert()
-        #self.rect_ground_surface = self.ground_surface.get_rect()
-        #self.rect_ground_surface.center = (-100, 100)
+        # self.ground_surface = pygame.image.load("testgrass.png")
+        # self.ground_surface.convert()
+        # self.rect_ground_surface = self.ground_surface.get_rect()
+        # self.rect_ground_surface.center = (-100, 100)
 
         self.ground.color = pygame.Color("green")
         self.drawables.append(self.ground)
@@ -97,12 +99,32 @@ class Game:
         body1 = a.body
         body2 = b.body
 
-        if self.proj_dict.get(id(body2)) is not None or self.proj_dict.get(id(body1)):
-            for i in [0, 1]:
-                if body1 == self.players[i].king.physical.body or \
-                        body2 == self.players[i].king.physical.body:
-                    self.players[i].king.hp = -1
-                    print("player ", 1 - i, "won")
+        if self.proj_dict.get(id(body2)) is not None or self.proj_dict.get(id(body1)) is not None:
+            def return_proj() -> Circle:
+                if self.proj_dict.get(id(body2)) is not None:
+                    return self.proj_dict.get(id(body2))
+                return self.proj_dict.get(id(body1))
+
+            def return_target() -> BuildingElement:
+                if self.builder.body_to_item_dict.get(id(body2)) is not None:
+                    return self.builder.body_to_item_dict.get(id(body2))
+                if self.builder.body_to_item_dict.get(id(body1)) is not None:
+                    return self.builder.body_to_item_dict.get(id(body1))
+                for i in [0, 1]:
+                    if body1 == self.players[i].king.physical.body or \
+                            body2 == self.players[i].king.physical.body:
+                        return self.players[i].king
+                return None
+
+            proj = return_proj()
+            targ = return_target()
+            if targ is not None and proj is not None:
+                targ.hp -= (proj.mass * (
+                        proj.body.velocity[0] * proj.body.velocity[0] + proj.body.velocity[1] * proj.body.velocity[1]))
+                print(targ.hp)
+                if targ.hp <= 0:
+                    self.drawables.remove(targ.physical)
+                    self.space.remove(targ.physical.body,targ.physical.shape)
 
         return True
 
@@ -186,8 +208,8 @@ class Game:
                     print(pos)
                     element = self.builder.build(pos)
                     if element is not None:
-                        self.space.add(element.shape, element.body)
-                        self.drawables.append(element)
+                        self.space.add(element.physical.shape, element.physical.body)
+                        self.drawables.append(element.physical)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:
