@@ -4,11 +4,13 @@ from copy import copy
 import pygame
 import pymunk as pm
 
+import GameStates
 from Builder import Builder
 from BuildingElement import BuildingElement
 from Camera import Camera
 from Catapult import Catapult
 from Circle import Circle
+from Player import Player
 from Rectangle import Rectangle
 
 
@@ -32,11 +34,36 @@ class Game:
         self.camera = Camera((self.width, self.height), (0, 0))
         self.drawables = []
         self.run = True
+        self.players = [Player(True, self), Player(False, self)]
+        self.current_state = GameStates.BUILDING
+        self.current_player = 0
+        self.set_state_to_building()
 
         elements_choice = [
             BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)), cost=100),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
+
+    def set_state_to_building(self):
+        self.space.gravity = 0, 0
+        self.current_player += 1
+        self.current_player %= 2
+        self.current_state = GameStates.BUILDING
+        self.camera.target=None
+        self.camera.set_center((200,600))
+
+    def set_state_to_firing(self):
+        self.current_state = GameStates.FIRING
+        self.players[self.current_player].playerTurn()
+        self.space.gravity = 0, 900
+
+
+    def apply_rules(self):
+        if self.current_state == GameStates.FIRING:
+            if self.players[self.current_player].catapult.is_ball_not_moving():
+                print("ball stopped")
+                self.set_state_to_building()
+
 
     def calculate_physics(self):
         dt = 1.0 / 60.0
@@ -70,7 +97,6 @@ class Game:
             if event.type == pygame.QUIT:
                 self.run = False
                 pygame.quit()
-
             if event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 print(pos)
@@ -79,18 +105,19 @@ class Game:
                     self.space.add(element.shape, element.body)
                     self.drawables.append(element)
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    pos = pygame.mouse.get_pos()
-                    print(pos)
-                    circle = Circle(self.display, self.camera, pos)
-                    self.space.add(circle.shape, circle.body)
-                    self.drawables.append(circle)
-
-                if event.key == pygame.K_SPACE:
-                    projectile = catapult.space_clicked()
-                    if projectile is not None:
-                        self.space.add(projectile.body, projectile.shape)
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                pos = pygame.mouse.get_pos()
+                print(pos)
+                circle = Circle(self.display, self.camera, pos)
+                self.space.add(circle.shape, circle.body)
+                self.drawables.append(circle)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.current_state == GameStates.FIRING:
+                projectile = self.players[self.current_player].catapult.space_clicked()
+                if projectile is not None:
+                    self.space.add(projectile.body, projectile.shape)
 
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                if self.current_state == GameStates.BUILDING:
+                    self.set_state_to_firing()

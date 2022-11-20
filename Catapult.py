@@ -22,6 +22,7 @@ class Catapult(Drawable):
         self.is_spinning = False
         self.drawables = game.drawables
         self.isFirstPlayer: bool = isFirstPlayer
+        self.ball = None
 
     def space_clicked(self):
         if not self.is_spinning:
@@ -42,7 +43,13 @@ class Catapult(Drawable):
                           self.yeet_force * math.cos(math.radians(self.angle - 90)))
         self.camera.follow(ball)
         self.drawables.append(ball)
+        self.ball = ball
         return ball
+
+    def is_ball_not_moving(self):
+        if self.ball is None:
+            return False
+        return self.ball.body.velocity == (0, 0) or self.ball.body.position[1]>1500
 
     def calc_end(self):
         self.angle += self.angular_speed
@@ -50,6 +57,8 @@ class Catapult(Drawable):
         self.end_point = self.base_pos[0] + diff[0], self.base_pos[1] + diff[1]
 
     def draw(self):
+        if self.ball is None:
+            return
         self.calc_end()
         base_point = self.camera.to_scr_pos(self.base_pos)
         end_point = self.camera.to_scr_pos(self.end_point)

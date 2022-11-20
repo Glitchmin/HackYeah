@@ -22,6 +22,7 @@ class Camera:
     # def follow(self, target: Drawable):
     def follow(self, target):
         self.target = target
+        print("following", target)
 
     def update_followed(self):
         if self.target is not None:
