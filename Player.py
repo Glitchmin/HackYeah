@@ -16,7 +16,8 @@ class Player:
         self.money: int = 100
         self.catapult: Catapult = None
         self.king = BuildingElement(
-                Rectangle(self.game.display, self.game.camera, pos_center, size=(game.GRID_SIZE * 4, game.GRID_SIZE * 6)),
+                Rectangle(self.game.display, self.game.camera, pos_center, size=(game.GRID_SIZE * 4, game.GRID_SIZE * 6),
+                          image_loader=self.game.image_loader,image_name="testgrass.png"),
                 cost=100, hp=10)
         self.game.space.add(self.king.physical.shape, self.king.physical.body)
         game.drawables.append(self.king.physical)
