@@ -43,6 +43,7 @@ class Game:
         self.proj_dict = {}
         player1 = Player(True, self, (-1600, 600))
         player2 = Player(False, self, (1600, 600))
+        pygame.font.init()
 
         self.players = [player1, player2]
         self.current_state = GameStates.BUILDING
@@ -51,6 +52,7 @@ class Game:
         self.set_state_to_building()
         self.winner = None
         self.create_ground()
+        self.font = pygame.font.SysFont(None, 24)
 
         self.buttons = []
         self.create_buttons()
@@ -91,7 +93,7 @@ class Game:
         # self.space.add(self.ground.shape, self.ground.shape.body)
 
     def create_buttons(self):
-        button1 = Button(self.display, self.camera, (50, 50))
+        button1 = Button(self.display, self.camera, (20, 800),self.font,color=pygame.Color("grey"))
         # button1.action = types.MethodType(self.finish_building, button1)
         self.drawables.append(button1)
         self.buttons.append((button1, self.finish_building))
@@ -145,6 +147,9 @@ class Game:
         self.camera.set_center(self.players[self.current_player].pos_center)
 
     def set_state_to_firing(self):
+        if len(self.buttons)==1:
+            self.drawables.remove(self.buttons[0][0])
+            self.buttons.clear()
         self.current_state = GameStates.FIRING
         self.current_player += 1
         self.current_player %= 2
@@ -173,7 +178,6 @@ class Game:
             drawable.draw()
         if self.winner is not None:
             self.display.fill(pygame.Color(0,255,255))
-            pygame.font.init()
             font = pygame.font.SysFont(None, 72)
             img = font.render('player '+str(self.winner+1)+' wins', True, pygame.Color("black") )
             self.display.blit(img, (self.width/2-img.get_size()[0]/2, self.height/2))

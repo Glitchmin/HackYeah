@@ -6,12 +6,13 @@ from Drawable import Drawable
 
 
 class Button(Drawable):
-    def __init__(self, window, camera, pos, size=(100, 50), color=pygame.Color("RED")):
+    def __init__(self, window, camera, pos,font, size=(100, 50), color=pygame.Color("RED")):
         super(Button, self).__init__(window, camera)
         self.pos = pos
         self.size = size
         self.color = color
         self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
+        self.font = font
 
     def get_pos(self) -> Tuple[float, float]:
         return self.pos
@@ -20,7 +21,12 @@ class Button(Drawable):
         return self.size
 
     def draw(self):
+
         pygame.draw.rect(self.window, self.color, self.rect)
+        img = self.font.render('building', True, pygame.Color("black"))
+        self.window.blit(img, (self.pos[0]+17,self.pos[1]+5))
+        img = self.font.render('finished', True, pygame.Color("black"))
+        self.window.blit(img, (self.pos[0]+17,self.pos[1]+20))
 
     def draw_on_pos(self, pos: Tuple[float, float]):
         new_rect = pygame.Rect(pos[0], pos[1], self.size[0], self.size[1])
