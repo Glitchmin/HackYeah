@@ -26,6 +26,7 @@ class Camera:
     def update_followed(self):
         if self.target is not None:
             self.set_center(self.target.get_pos())
+            self.pos = (self.pos[0], min(self.pos[1], 250))
 
     def to_scr_pos(self, pos: Tuple[float, float]) -> Tuple[float, float]:
         self.update_followed()
