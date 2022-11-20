@@ -12,6 +12,7 @@ from BuildingElement import BuildingElement
 from Camera import Camera
 from Catapult import Catapult
 from Circle import Circle
+from ImageLoader import ImageLoader
 from Player import Player
 from Rectangle import Rectangle
 
@@ -21,7 +22,6 @@ class Game:
     BLACK = (0, 0, 0)
     RED = (255, 0, 0)
     YELLOW = (255, 255, 0)
-
     FPS = 60
     GRID_SIZE = 15
 
@@ -33,6 +33,7 @@ class Game:
         self.ch.pre_solve = self.pre_solve_collision
         self.width, self.height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         self.display = pygame.display.set_mode((self.width, self.height))
+        self.image_loader = ImageLoader()
         self.ch.data["surface"] = self.display
         self.camera = Camera((self.width, self.height), (0, 0))
         self.drawables = []
@@ -46,7 +47,7 @@ class Game:
 
         elements_choice = [
             BuildingElement(
-                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)),
+                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6), image_loader = self.image_loader, image_name =  "szary.png"),
                 cost=100),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
@@ -56,7 +57,13 @@ class Game:
         size_y = 2000
         pos = (-self.display.get_width() * 4, (y - (y - size_y / 2) % Game.GRID_SIZE))
         self.ground = Rectangle(self.display, self.camera, pos,
-                                size=(100 * self.display.get_width(), size_y), static=True)
+                                size=(100 * self.display.get_width(), size_y), image_loader = self.image_loader, image_name =  "testgrass.png", static=True, render_image = False)
+
+        #self.ground_surface = pygame.image.load("testgrass.png")
+        #self.ground_surface.convert()
+        #self.rect_ground_surface = self.ground_surface.get_rect()
+        #self.rect_ground_surface.center = (-100, 100)
+
         self.ground.color = pygame.Color("green")
         self.drawables.append(self.ground)
         self.space.add(self.ground.shape, self.ground.shape.body)
@@ -106,7 +113,6 @@ class Game:
     def update_screen(self, clock):
         self.update_drawable()
         self.builder.show_selected(pygame.mouse.get_pos())
-
         self.display_frame(clock)
 
     def update_drawable(self):
