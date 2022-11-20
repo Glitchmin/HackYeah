@@ -8,9 +8,12 @@ from Drawable import Drawable
 
 class Catapult(Drawable):
 
-    def __init__(self, game, isFirstPlayer: bool):
+    def __init__(self, game, isFirstPlayer: bool, base_pos: Tuple[float, float]):
         super().__init__(game.display, game.camera)
-        self.base_pos = 200, 500 - 200
+        self.base_pos = base_pos
+        # self.base_pos = 200, 500
+        # if not isFirstPlayer:
+        #     self.base_pos = 1200, 500
         self.mass = 100
         self.angle = -45
         self.length = 200
@@ -22,10 +25,12 @@ class Catapult(Drawable):
         self.is_spinning = False
         self.drawables = game.drawables
         self.isFirstPlayer: bool = isFirstPlayer
+        self.isHidden = False
         self.ball = None
 
     def space_clicked(self):
         if not self.is_spinning:
+            self.isHidden = False
             self.is_spinning = True
             if self.isFirstPlayer:
                 self.angle = -45
@@ -44,12 +49,9 @@ class Catapult(Drawable):
         self.camera.follow(ball)
         self.drawables.append(ball)
         self.ball = ball
+        self.isHidden = True
         return ball
 
-    def is_ball_not_moving(self):
-        if self.ball is None:
-            return False
-        return self.ball.body.velocity == (0, 0) or self.ball.body.position[1]>1500
 
     def calc_end(self):
         self.angle += self.angular_speed
@@ -57,7 +59,7 @@ class Catapult(Drawable):
         self.end_point = self.base_pos[0] + diff[0], self.base_pos[1] + diff[1]
 
     def draw(self):
-        if self.ball is None:
+        if self.isHidden:
             return
         self.calc_end()
         base_point = self.camera.to_scr_pos(self.base_pos)
@@ -65,4 +67,4 @@ class Catapult(Drawable):
         pygame.draw.line(self.window, pygame.Color("brown"), base_point, end_point, 5)
 
     def get_pos(self) -> Tuple[float, float]:
-        return self.end_point
+        return self.base_pos
