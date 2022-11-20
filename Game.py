@@ -13,7 +13,6 @@ from Builder import Builder
 from BuildingElement import BuildingElement
 from Button import Button
 from Camera import Camera
-from Catapult import Catapult
 from Circle import Circle
 from ImageLoader import ImageLoader
 from Player import Player
@@ -50,7 +49,7 @@ class Game:
         self.current_player = 1
         self.current_proj: Circle = None
         self.set_state_to_building()
-
+        self.winner = None
         self.create_ground()
 
         self.buttons = []
@@ -63,6 +62,9 @@ class Game:
                 cost=100, hp=10),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
+
+    def player_won(self, nr):
+        self.winner = nr
 
     def create_ground(self):
         y = self.display.get_height() + 1.1 * 1000
@@ -123,10 +125,14 @@ class Game:
             if targ is not None and proj is not None:
                 targ.hp -= (proj.mass * (
                         proj.body.velocity[0] * proj.body.velocity[0] + proj.body.velocity[1] * proj.body.velocity[1]))
-                print(targ.hp)
                 if targ.hp <= 0:
-                    self.drawables.remove(targ.physical)
-                    self.space.remove(targ.physical.body,targ.physical.shape)
+                    if targ == self.players[0].king:
+                        self.player_won(1)
+                    if targ == self.players[1].king:
+                        self.player_won(0)
+                    if targ.physical in self.drawables:
+                        self.drawables.remove(targ.physical)
+                        self.space.remove(targ.physical.body, targ.physical.shape)
 
         return True
 
@@ -138,7 +144,6 @@ class Game:
         self.camera.target = None
         self.camera.set_center(self.players[self.current_player].pos_center)
 
-
     def set_state_to_firing(self):
         self.current_state = GameStates.FIRING
         self.current_player += 1
@@ -148,7 +153,6 @@ class Game:
             self.players[1-self.current_player].catapult.isHidden = True
         self.camera.target = self.players[self.current_player].catapult
         self.space.gravity = 0, 900
-
 
     def calculate_physics(self):
         dt = 1.0 / 60.0
@@ -169,6 +173,12 @@ class Game:
             #     to_remove.append(drawable)
             p = tuple(map(int, drawable.get_pos()))
             drawable.draw()
+        if self.winner is not None:
+            self.display.fill(pygame.Color(0,255,255))
+            pygame.font.init()
+            font = pygame.font.SysFont(None, 72)
+            img = font.render('player '+str(self.winner+1)+' wins', True, pygame.Color("black") )
+            self.display.blit(img, (self.width/2-img.get_size()[0]/2, self.height/2))
         for ball in to_remove:
             self.space.remove(ball.shape, ball.body)
             self.drawables.remove(ball)
@@ -198,7 +208,6 @@ class Game:
                 for button, action in self.buttons:
                     if button.hovers(pos):
                         button_clicked = True
-                        print("aaaa")
                         # button.action()
                         action()
 
@@ -211,9 +220,9 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    self.builder.angle += math.pi/2
+                    self.builder.angle += math.pi / 2
                 if event.key == pygame.K_e:
-                    self.builder.angle -= math.pi/2
+                    self.builder.angle -= math.pi / 2
                 if event.key == pygame.K_p:
                     pos = pygame.mouse.get_pos()
                     print(pos)
