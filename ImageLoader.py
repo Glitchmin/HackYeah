@@ -22,6 +22,4 @@ class ImageLoader:
                                               math.degrees(-angle))
         offset = Vec2d(*rotated_img.get_size()) / 2
         pos = pos - offset
-        if angle != 0:
-            print(angle)
         display.blit(rotated_img, pygame.Rect(*pos, *size))
