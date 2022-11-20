@@ -58,7 +58,7 @@ class Game:
 
         elements_choice = [
             BuildingElement(
-                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6),
+                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 10),
                           image_loader=self.image_loader, image_name="szary.png"),
                 cost=100, hp=10),
         ]
