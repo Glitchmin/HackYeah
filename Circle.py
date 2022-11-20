@@ -27,8 +27,18 @@ class Circle(Physical):
         self.draw_on_pos(self.camera.to_scr_pos(self.get_pos()))
 
     def draw_on_pos(self, pos: Tuple[float, float]):
-        pygame.draw.circle(self.window, pygame.Color("blue"), pos, int(self.radius), 2)
+        pygame.draw.circle(self.window, pygame.Color("red"), self.normalize_pos(pos), int(self.radius), 2)
 
     def copy(self):
         ret = Circle(self.window, self.camera, self.camera.to_scr_pos(self.get_pos()))
         return ret
+
+    def get_pos(self) -> Tuple[float, float]:
+        return self.shape.body.position
+        # return (self.shape.body.position[0] + self.get_size()[0]/2,
+        #             self.shape.body.position[1] + self.get_size()[1]/2)
+
+    def normalize_pos(self, pos: Tuple[float, float]):
+        return pos
+        # return (pos[0] - self.get_size()[0] / 2,
+        #         pos[1] - self.get_size()[1] / 2)
