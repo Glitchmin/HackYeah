@@ -137,7 +137,6 @@ class Game:
 
     def update_screen(self, clock):
         self.update_drawable()
-        self.builder.show_selected(pygame.mouse.get_pos())
         if self.current_state == GameStates.BUILDING:
             self.builder.show_selected(pygame.mouse.get_pos())
 
@@ -162,9 +161,9 @@ class Game:
     def finish_building(self):
         if self.current_state == GameStates.BUILDING:
             self.set_state_to_building()
-        if self.current_player == 0:
-            self.current_player = 1
-            self.set_state_to_firing()
+            if self.current_player == 0:
+                self.current_player = 1
+                self.set_state_to_firing()
 
     def handle_input(self):
         for event in pygame.event.get():
