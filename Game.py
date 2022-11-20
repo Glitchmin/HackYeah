@@ -175,7 +175,7 @@ class Game:
             self.display.fill(pygame.Color(0,255,255))
             pygame.font.init()
             font = pygame.font.SysFont(None, 72)
-            img = font.render('player '+str(self.winner)+' wins', True, pygame.Color("black") )
+            img = font.render('player '+str(self.winner+1)+' wins', True, pygame.Color("black") )
             self.display.blit(img, (self.width/2-img.get_size()[0]/2, self.height/2))
         for ball in to_remove:
             self.space.remove(ball.shape, ball.body)
