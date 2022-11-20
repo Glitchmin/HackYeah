@@ -14,11 +14,13 @@ class Builder:
         self.selected = copy(elements_choice[0])
         self.camera = camera
         self.body_to_item_dict = {}
+        self.angle = 0.0
 
     def show_selected(self, pos: Tuple[float, float]):
         if self.selected is not None:
             # self.selected.physical.body.position = self.pos_in_grid(pos)
             self.selected.physical.body.position = self.pos_in_grid(self.camera.to_world_pos(pos))
+            self.selected.physical.body.angle = self.angle
             self.selected.physical.draw()
             # self.selected.physical.draw_on_pos(pos)
 
@@ -29,6 +31,7 @@ class Builder:
             pos = self.pos_in_grid(pos)
             new_element = BuildingElement(self.selected.physical.copy(),10,1000000)
             new_element.physical.body.position = pos
+            new_element.physical.body.angle = self.angle
 
             self.body_to_item_dict[id(new_element.physical.body)] = new_element
             return new_element
