@@ -59,7 +59,7 @@ class Game:
 
         elements_choice = [
             BuildingElement(
-                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6),
+                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 10),
                           image_loader=self.image_loader, image_name="szary.png"),
                 cost=100, hp=10),
         ]
@@ -82,7 +82,7 @@ class Game:
         # self.rect_ground_surface = self.ground_surface.get_rect()
         # self.rect_ground_surface.center = (-100, 100)
 
-        self.ground.color = pygame.Color("green")
+        self.ground.color = pygame.Color(0, 255, 100)
         self.drawables.append(self.ground)
         self.space.add(self.ground.shape, self.ground.shape.body)
 
@@ -154,6 +154,8 @@ class Game:
         self.current_player += 1
         self.current_player %= 2
         self.players[self.current_player].playerTurn()
+        if self.players[1-self.current_player].catapult is not None:
+            self.players[1-self.current_player].catapult.isHidden = True
         self.camera.target = self.players[self.current_player].catapult
         self.space.gravity = 0, 900
 
@@ -187,7 +189,7 @@ class Game:
 
     def display_frame(self, clock):
         pygame.display.update()
-        self.display.fill(pygame.Color("white"))
+        self.display.fill(pygame.Color(0, 208, 230))
         clock.tick(Game.FPS)
 
     def finish_building(self):

@@ -2,13 +2,16 @@ import math
 from typing import Tuple
 
 import pygame
+from pymunk import Vec2d
+
 from Circle import Circle
 from Drawable import Drawable
+from ImageLoader import ImageLoader
 
 
 class Catapult(Drawable):
 
-    def __init__(self, game, isFirstPlayer: bool, base_pos: Tuple[float, float]):
+    def __init__(self, game, isFirstPlayer: bool, base_pos: Tuple[float, float], image_loader: ImageLoader):
         super().__init__(game.display, game.camera)
         self.base_pos = base_pos
         # self.base_pos = 200, 500
@@ -25,6 +28,7 @@ class Catapult(Drawable):
         self.is_spinning = False
         self.drawables = game.drawables
         self.isFirstPlayer: bool = isFirstPlayer
+        self.image_loader = image_loader
         self.isHidden = False
         self.ball = None
 
@@ -49,9 +53,8 @@ class Catapult(Drawable):
         self.camera.follow(ball)
         self.drawables.append(ball)
         self.ball = ball
-        self.isHidden = True
+        # self.isHidden = True
         return ball
-
 
     def calc_end(self):
         self.angle += self.angular_speed
@@ -64,7 +67,12 @@ class Catapult(Drawable):
         self.calc_end()
         base_point = self.camera.to_scr_pos(self.base_pos)
         end_point = self.camera.to_scr_pos(self.end_point)
-        pygame.draw.line(self.window, pygame.Color("brown"), base_point, end_point, 5)
+        # pygame.draw.line(self.window, pygame.Color("brown"), base_point, end_point, 5)
+        self.image_loader.draw_on_pos(base_point + Vec2d(40, 30), (200, 100), "giraffe.png", self.window)
+        self.image_loader.draw_on_pos((Vec2d(*end_point) + Vec2d(*base_point)) / 2, (100, 270),
+                                      "full_loong_giraffe_head.png", self.window, math.radians(-self.angle + 180))
+        if self.is_spinning:
+            pygame.draw.circle(self.window, pygame.Color(120, 120, 120), end_point, int(25), width=0)
 
     def get_pos(self) -> Tuple[float, float]:
         return self.base_pos

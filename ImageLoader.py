@@ -12,7 +12,8 @@ class ImageLoader:
                  "full_giraffe.png",
                  "full_loong_giraffe.png",
                  "full_loong_giraffe_head.png",
-                 "full_loong_giraffe_body.png"]
+                 "full_loong_giraffe_body.png",
+                 "compressed_giraffe_body.png"]
         for path in paths:
             self.images[path] = pygame.image.load(path)
             self.images[path].convert_alpha()
