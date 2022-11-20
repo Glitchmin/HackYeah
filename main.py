@@ -12,7 +12,8 @@ game = Game()
 def main():
     clock = pygame.time.Clock()
 
-    game.drawables.append(Ground(game.display, game.space, game.camera))
+    # ground
+    # game.drawables.append(Ground(game.display, game.space, game.camera))
 
     while game.run:
         game.apply_rules()

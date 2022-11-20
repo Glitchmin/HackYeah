@@ -2,6 +2,7 @@ import ctypes
 from copy import copy
 
 import pygame
+import pymunk
 import pymunk as pm
 
 import GameStates
@@ -39,31 +40,49 @@ class Game:
         self.current_player = 0
         self.set_state_to_building()
 
+        self.create_ground()
+
         elements_choice = [
-            BuildingElement(Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)), cost=100),
+            BuildingElement(
+                Rectangle(self.display, self.camera, pos=(50, 500), size=(Game.GRID_SIZE * 4, Game.GRID_SIZE * 6)),
+                cost=100),
         ]
         self.builder = Builder(1000, Game.GRID_SIZE, elements_choice, self.camera)
+
+    def create_ground(self):
+        y = self.display.get_height() + 1.1 * 1000
+        size_y = 2000
+        pos = (-self.display.get_width() * 4, (y - (y - size_y / 2) % Game.GRID_SIZE))
+        self.ground = Rectangle(self.display, self.camera, pos,
+                                size=(100 * self.display.get_width(), size_y), static=True)
+        self.ground.color = pygame.Color("green")
+        self.drawables.append(self.ground)
+        self.space.add(self.ground.shape, self.ground.shape.body)
+
+        # self.ground = Rectangle(self.display, self.camera, (-self.display.get_width()*4, self.display.get_height()+100),
+        #                         size=(100 * self.display.get_width(), 200), static=True)
+        # self.ground.color = pygame.Color("green")
+        # self.drawables.append(self.ground)
+        # self.space.add(self.ground.shape, self.ground.shape.body)
 
     def set_state_to_building(self):
         self.space.gravity = 0, 0
         self.current_player += 1
         self.current_player %= 2
         self.current_state = GameStates.BUILDING
-        self.camera.target=None
-        self.camera.set_center((200,600))
+        self.camera.target = None
+        self.camera.set_center((200, 600))
 
     def set_state_to_firing(self):
         self.current_state = GameStates.FIRING
         self.players[self.current_player].playerTurn()
         self.space.gravity = 0, 900
 
-
     def apply_rules(self):
         if self.current_state == GameStates.FIRING:
             if self.players[self.current_player].catapult.is_ball_not_moving():
                 print("ball stopped")
                 self.set_state_to_building()
-
 
     def calculate_physics(self):
         dt = 1.0 / 60.0
