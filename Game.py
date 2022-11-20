@@ -32,7 +32,7 @@ class Game:
         self.space = pm.Space()
         self.space.gravity = (0.0, 900.0)
         self.ch: CollisionHandler = self.space.add_collision_handler(0, 0)
-        self.ch.pre_solve = self.pre_solve_collision
+        self.ch.post_solve = self.pre_solve_collision
         self.width, self.height = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
         self.display = pygame.display.set_mode((self.width, self.height))
         self.image_loader = ImageLoader()
@@ -146,11 +146,6 @@ class Game:
         self.camera.target = self.players[self.current_player].catapult
         self.space.gravity = 0, 900
 
-    def apply_rules(self):
-        if self.current_state == GameStates.FIRING:
-            if self.current_proj is not None and self.current_proj.is_not_moving():
-                self.current_proj = None
-                self.set_state_to_firing()
 
     def calculate_physics(self):
         dt = 1.0 / 60.0

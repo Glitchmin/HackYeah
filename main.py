@@ -16,7 +16,6 @@ def main():
     # game.drawables.append(Ground(game.display, game.space, game.camera))
 
     while game.run:
-        game.apply_rules()
         game.handle_input()
         game.calculate_physics()
         game.update_screen(clock)

@@ -21,7 +21,7 @@ class Catapult(Drawable):
         self.space = game.space
         self.angular_speed = 0.0
         self.calc_end()
-        self.yeet_force = 1300
+        self.yeet_force = 1550
         self.is_spinning = False
         self.drawables = game.drawables
         self.isFirstPlayer: bool = isFirstPlayer
