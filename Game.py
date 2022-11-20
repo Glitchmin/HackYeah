@@ -144,6 +144,8 @@ class Game:
         self.current_player += 1
         self.current_player %= 2
         self.players[self.current_player].playerTurn()
+        if self.players[1-self.current_player].catapult is not None:
+            self.players[1-self.current_player].catapult.isHidden = True
         self.camera.target = self.players[self.current_player].catapult
         self.space.gravity = 0, 900
 

@@ -16,15 +16,16 @@ class Player:
         self.money: int = 100
         self.catapult: Catapult = None
         self.king = BuildingElement(
-                Rectangle(self.game.display, self.game.camera, pos_center, size=(game.GRID_SIZE * 4, game.GRID_SIZE * 6),
-                          image_loader=self.game.image_loader,image_name="testgrass.png"),
-                cost=100, hp=10)
+            Rectangle(self.game.display, self.game.camera, pos_center, size=(game.GRID_SIZE * 4, game.GRID_SIZE * 6),
+                      image_loader=self.game.image_loader, image_name="compressed_giraffe_body.png"),
+            cost=100, hp=10)
         self.game.space.add(self.king.physical.shape, self.king.physical.body)
         game.drawables.append(self.king.physical)
 
     def playerTurn(self):
         self.catapult = Catapult(self.game, self.isFirst,
-                                 v_add(self.pos_center, v_mul((self.turn_multiplier(), 1), Player.BASE_OFFSET)))
+                                 v_add(self.pos_center, v_mul((self.turn_multiplier(), 1), Player.BASE_OFFSET)),
+                                 image_loader=self.game.image_loader)
         self.game.drawables.append(self.catapult)
 
     def turn_multiplier(self):
