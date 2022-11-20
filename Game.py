@@ -67,9 +67,10 @@ class Game:
         y = self.display.get_height() + 1.1 * 1000
         size_y = 2000
         pos = (-self.display.get_width() * 4, (y - (y - size_y / 2) % Game.GRID_SIZE))
+        # pos = (-self.display.get_width() * 4, self.display.get_height() + 200)
         self.ground = Rectangle(self.display, self.camera, pos,
                                 size=(100 * self.display.get_width(), size_y), image_loader=self.image_loader,
-                                image_name="testgrass.png", static=True, render_image=False)
+                                image_name="weed.png", static=True, render_image=False)
 
         # self.ground_surface = pygame.image.load("testgrass.png")
         # self.ground_surface.convert()

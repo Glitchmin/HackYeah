@@ -16,9 +16,9 @@ class Physical(Drawable, ABC):
         self.body = self.shape.body
 
     def get_pos(self) -> Tuple[float, float]:
-        return (self.shape.body.position[0] - self.get_size()[0]/2,
-                self.shape.body.position[1] - self.get_size()[1]/2)
-        # return self.shape.body.position
+        # return (self.shape.body.position[0] - self.get_size()[0]/2,
+        #         self.shape.body.position[1] - self.get_size()[1]/2)
+        return self.shape.body.position
 
     def add_x_velocity(self, x_v):
         self.body.velocity = self.body.velocity[0] + x_v, self.body.velocity[1]
